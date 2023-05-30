@@ -4,6 +4,8 @@
   ansible.builtin.file:
     state: directory
     path: "./presto"
+    owner: ubuntu
+    group: ubuntu
     mode: '0744'
 
 - name: Download presto
