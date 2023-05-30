@@ -1,0 +1,94 @@
+---
+# Presto Install and run
+- name: Create software directory for presto
+  ansible.builtin.file:
+    state: directory
+    path: "./presto"
+    mode: '0744'
+
+- name: Download presto
+  ansible.builtin.get_url:
+    url: "https://repo1.maven.org/maven2/com/facebook/presto/presto-server/0.280/presto-server-0.280.tar.gz"
+    dest: presto
+    mode: '0644'
+
+- name: Extract presto
+  ansible.builtin.shell: |
+    tar xvfz presto-server-0.280.tar.gz
+  args:
+    chdir: presto
+
+- name: Create etc directory for presto
+  ansible.builtin.file:
+    state: directory
+    path: "presto/presto-server-0.280/etc"
+    mode: '0744'
+
+- name: Create data directory for presto
+  ansible.builtin.file:
+    state: directory
+    path: "presto/presto-server-0.280/data"
+    mode: '0744'
+
+- name: Create catalog directory for presto
+  ansible.builtin.file:
+    state: directory
+    path: "presto/presto-server-0.280/etc/catalog"
+    mode: '0744'
+
+- name: Template a file to etc/config.properties
+  ansible.builtin.template:
+    src: config.properties.j2
+    dest: presto/presto-server-0.280/etc/config.properties
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  become: true
+
+- name: Template a file to etc/jvm.config
+  ansible.builtin.template:
+    src: jvm.config.j2
+    dest: presto/presto-server-0.280/etc/jvm.config
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  become: true
+
+- name: Template a file to etc/jmx.properties
+  ansible.builtin.template:
+    src: jmx.properties.j2
+    dest: presto/presto-server-0.280/etc/jmx.properties
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  become: true
+
+- name: Template a file to etc/node.properties
+  ansible.builtin.template:
+    src: node.properties.j2
+    dest: presto/presto-server-0.280/etc/node.properties
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  become: true
+
+- name: Template a file to etc/log.properties
+  ansible.builtin.template:
+    src: log.properties.j2
+    dest: presto/presto-server-0.280/etc/log.properties
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  become: true
+
+- name: Add symbolic link python -> python3
+  ansible.builtin.file:
+    src: /usr/bin/python3
+    dest: /usr/bin/python
+    state: link
+  become: true
+
+- name: Change the working directory and start server
+  ansible.builtin.shell: bin/launcher start
+  args:
+    chdir: presto/presto-server-0.280/
