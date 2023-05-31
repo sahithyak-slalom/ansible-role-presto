@@ -42,6 +42,7 @@
   ansible.builtin.template:
     src: config.properties.j2
     dest: presto/presto-server-0.280/etc/config.properties
+    remote_src: true
     owner: ubuntu
     group: ubuntu
     mode: '0644'
